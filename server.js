@@ -29,7 +29,7 @@ app.post("/api/users", (req,res)=>{
         res.send({username:data.username, _id:data._id});
       })
     }else res.send({username:data.username, _id:data._id});
-  });
+  })
 });
 
 function validateDate(date){
@@ -44,10 +44,14 @@ app.get("/api/users", (req,res)=>{
   })
 })
 
-console.log(validateDate("1990-01-02"));
+//console.log(validateDate("1990-01-01"));
 
 app.post("/api/users/:_id/exercises", (req,res)=>{
-  let date = req.body.date === '' ? new Date() : new Date(req.body.date);
+  console.log("DATE", req.body.date);
+  var date = new Date(Date.now()).toDateString();
+  if (validateDate(req.body.date)){
+    date = new Date(req.body.date).toDateString();
+  }
   User.findOne({_id:req.params._id}, (err,data)=>{
     if (err) console.log(err);
     if (data){
@@ -59,14 +63,13 @@ app.post("/api/users/:_id/exercises", (req,res)=>{
 
       data.save((err,data)=>{
         if (err) console.log(err);
-        else res.send({_id:data._id, username:data.username, date:date.toDateString(), duration:parseInt(req.body.duration), description: req.body.description});
+        else res.send({_id:data._id, username:data.username, date:date.toString(), duration:parseInt(req.body.duration), description: req.body.description});
       });
     }else{
       res.send(`Cast to ObjectId failed for value "${req.params._id}" at path "_id" for model "Users"`);
     }
   })
 });
-console.log(new Date("1989-12-31").toDateString())
 
 app.get("/api/users/:_id/logs", (req,res)=>{
   console.log(req.originalUrl, req.query.from, req.query.to, req.query.limit);
@@ -75,7 +78,7 @@ app.get("/api/users/:_id/logs", (req,res)=>{
     if (data){
       var ret = {_id:data._id, username:data.username};
       data.log = data.log.map((item)=>{
-        item.date = new Date(item.date).toDateString();
+        item.date = item.date.toString();
         return item;
       });
       if (req.query.from && validateDate(req.query.from)){
@@ -99,7 +102,7 @@ app.get("/api/users/:_id/logs", (req,res)=>{
         }
       }ret.count = data.count;
       ret.log = data.log;
-      res.json(ret);
+      res.send(ret);
       console.log(ret.log);
     }else{
       res.send(`Cast to ObjectId failed for value "${req.params._id}" at path "_id" for model "Users"`);
