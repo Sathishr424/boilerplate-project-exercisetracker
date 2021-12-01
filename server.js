@@ -29,7 +29,7 @@ app.post("/api/users", (req,res)=>{
         res.send({username:data.username, _id:data._id});
       })
     }else res.send({username:data.username, _id:data._id});
-  })
+  });
 });
 
 function validateDate(date){
@@ -47,11 +47,7 @@ app.get("/api/users", (req,res)=>{
 console.log(validateDate("1990-01-02"));
 
 app.post("/api/users/:_id/exercises", (req,res)=>{
-  console.log("ID",req.params._id,"DATE", req.body.date);
-  var date = new Date(Date.now()).toDateString();
-  if (validateDate(req.body.date)){
-    date = new Date(req.body.date).toDateString();
-  }
+  let date = req.body.date === '' ? new Date() : new Date(req.body.date);
   User.findOne({_id:req.params._id}, (err,data)=>{
     if (err) console.log(err);
     if (data){
@@ -63,7 +59,7 @@ app.post("/api/users/:_id/exercises", (req,res)=>{
 
       data.save((err,data)=>{
         if (err) console.log(err);
-        else res.send({_id:data._id, username:data.username, date:date.toString(), duration:parseInt(req.body.duration), description: req.body.description});
+        else res.send({_id:data._id, username:data.username, date:date.toDateString(), duration:parseInt(req.body.duration), description: req.body.description});
       });
     }else{
       res.send(`Cast to ObjectId failed for value "${req.params._id}" at path "_id" for model "Users"`);
