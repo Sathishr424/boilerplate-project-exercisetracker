@@ -1,1 +1,3 @@
-# [Exercise Tracker](https://www.freecodecamp.org/learn/apis-and-microservices/apis-and-microservices-projects/exercise-tracker)
+# [Exercise Tracker](https://sat-exercise-tracker.herokuapp.com/)
+
+Live [here](https://sat-exercise-tracker.herokuapp.com/)
